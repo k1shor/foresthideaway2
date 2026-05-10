@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+:root {
+  /* Warm Forest Palette */
+  --forest-deep:    #1c2316;
+  --forest-dark:    #2a3320;
+  --forest-mid:     #3d4f2c;
+  --amber:          #c8923a;
+  --amber-light:    #d4a85a;
+  --bark:           #8b5e3c;
+  --parchment:      #f5ede0;
+  --warm-sand:      #ede0cc;
+  --warm-stone:     #e8d8c0;
+  --sage-light:     #dde6d0;
+  --warm-white:     #faf6ef;
+  --text-dark:      #1e1a14;
+  --text-warm:      #4a3a28;
+  --text-muted:     #7a6852;
+
+  --background: var(--parchment);
+  --foreground: var(--text-dark);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-playfair);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Utility: amber underline on hover for links */
+.link-warm {
+  position: relative;
+  display: inline-block;
+}
+.link-warm::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #c8923a;
+  transition: width 0.3s ease;
+}
+.link-warm:hover::after {
+  width: 100%;
+}
