@@ -156,9 +156,9 @@ export default function AboutUsPage() {
           </div>
 
           <div className="mt-12">
-            <CtaLink href="/contact" variant="gold" className="px-7 py-3.5 tracking-[0.18em] text-xs">
+            {/* <CtaLink href="/contact" variant="gold" className="px-7 py-3.5 tracking-[0.18em] text-xs">
               Plan Your Stay
-            </CtaLink>
+            </CtaLink> */}
           </div>
         </div>
       </section>
