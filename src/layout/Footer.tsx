@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CtaLink from "@/components/ui/CtaLink";
 
 export default function Footer() {
   return (
@@ -45,16 +46,13 @@ export default function Footer() {
             <p className="text-[10px] tracking-[0.3em] uppercase text-[#c8923a] mb-5">Keep In Touch</p>
             <address className="not-italic text-sm text-[#b8a88a] leading-7 mb-5">
               Forest Hideaway Resort<br />
-              Bardiya, Thakurdwara, Nepal<br />
-              <a href="tel:+9779800000000" className="hover:text-[#f5ede0] transition-colors">+977 9800 000 000</a><br />
-              <a href="mailto:stay@foresthideaway.com" className="hover:text-[#f5ede0] transition-colors">stay@foresthideaway.com</a>
+              Thakurdwara, Bardia, Nepal<br />
+              <a href="tel:+9779858026414" className="hover:text-[#f5ede0] transition-colors">+977-9858026414</a><br />
+              <a href="mailto:info@foresthideaway.com" className="hover:text-[#f5ede0] transition-colors">info@foresthideaway.com</a>
             </address>
-            <Link
-              href="/contact"
-              className="text-[11px] tracking-[0.2em] uppercase border border-[#c8923a] text-[#c8923a] px-4 py-2.5 inline-block hover:bg-[#c8923a] hover:text-[#1c2316] transition-all duration-300"
-            >
+            <CtaLink href="/contact" variant="gold-dark" className="text-[11px] tracking-[0.2em] px-4 py-2.5">
               Book Your Stay
-            </Link>
+            </CtaLink>
           </div>
 
           {/* Social */}

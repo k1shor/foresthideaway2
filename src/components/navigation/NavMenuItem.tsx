@@ -110,15 +110,18 @@ export default function NavMenuItem({ item, mobile = false, onNavigate }: NavMen
       )}
 
       {/* Dropdown: appears on group hover */}
-      <div className="absolute left-0 top-full pt-4 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200 z-50">
-        <div className="min-w-60 bg-[#faf6ef] text-[#1e1a14] border border-[#e8d8c0] p-4 space-y-3 shadow-lg">
+      <div className="absolute left-0 top-full pt-4 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-300 z-50">
+        <div className="min-w-60 bg-[#faf6ef] text-[#1e1a14] border border-[#e8d8c0] p-2 shadow-lg">
           {item.submenu.map((subItem) => (
             <Link
               key={subItem.label}
               href={subItem.href}
-              className="block text-[11px] tracking-[0.12em] uppercase text-[#4a3a28] hover:text-[#c8923a] transition-colors duration-200"
+              className="group/sub relative block overflow-hidden px-3 py-2 text-[11px] tracking-[0.12em] uppercase text-[#4a3a28] transition-colors duration-500"
             >
-              {subItem.label}
+              <span className="absolute inset-0 bg-[#c8923a]/12 [clip-path:circle(0%_at_50%_50%)] group-hover/sub:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/sub:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
+              <span className="relative z-10 group-hover/sub:text-[#8b5e3c] transition-colors duration-500">
+                {subItem.label}
+              </span>
             </Link>
           ))}
         </div>

@@ -1,12 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
 import NavMenuItem from '@/components/navigation/NavMenuItem';
-import { mainNavItems } from '@/data/navigation';
+import CtaLink from '@/components/ui/CtaLink';
+import type { NavItem } from '@/components/navigation/NavMenuItem';
+import { staticNavItems } from '@/data/navigation';
+import type { Activity, Package } from '@/lib/api/types';
 
-export default function Navbar() {
+const SUBMENU_CAP = 8;
+
+type NavbarProps = {
+  activities: Activity[];
+  packages: Package[];
+};
+
+export default function Navbar({ activities, packages }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -18,32 +28,69 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const activitiesSubmenu = [
+    ...activities.slice(0, SUBMENU_CAP).map((act) => ({
+      label: act.title,
+      href: `/activities/${act.slug}`,
+    })),
+    { label: 'View All Activities →', href: '/activities' },
+  ];
+
+  const packagesSubmenu = [
+    ...packages.slice(0, SUBMENU_CAP).map((pkg) => ({
+      label: pkg.name,
+      href: `/packages/${pkg.slug}`,
+    })),
+    { label: 'View All Packages →', href: '/packages' },
+  ];
+
+  const mainNavItems: NavItem[] = [
+    staticNavItems[0], // Bardia National Park
+    staticNavItems[1], // About Us
+    { label: 'Activities', href: '/activities', submenu: activitiesSubmenu },
+    { label: 'Packages', href: '/packages', submenu: packagesSubmenu },
+    staticNavItems[2], // Guest Reviews
+    staticNavItems[3], // Blogs
+    staticNavItems[4], // Contact
+  ];
+
+  // Mobile menu opened over the transparent hero header looked empty/washed-out —
+  // treat it as "scrolled" styling so the bar and panel always share one solid look.
+  const effectiveScrolled = scrolled || mobileOpen;
+
   return (
-    <motion.header
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 w-full z-50 transition-all duration-500 border-b ${
-        scrolled
-          ? 'bg-[#faf6ef]/97 backdrop-blur-md border-[#e8d8c0] py-4 text-[#1e1a14]'
-          : 'bg-transparent border-transparent py-6 text-white'
+    <header
+      className={`fixed top-0 w-full z-50 transition-all duration-500 border-b ${scrolled ? 'py-4' : 'py-6'} ${
+        effectiveScrolled
+          ? 'bg-[#faf6ef]/97 backdrop-blur-md border-[#e8d8c0] text-[#1e1a14]'
+          : 'bg-transparent border-transparent text-white'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         {/* Logo */}
         <div className="text-left shrink-0">
-          <Link href="/" className="flex flex-col items-start">
-            <span className="font-serif text-2xl md:text-3xl tracking-widest leading-none">
-              FOREST
-            </span>
-            <span className={`text-[9px] tracking-[0.4em] font-light mt-1.5 ${scrolled ? 'text-[#8b5e3c]' : 'text-[#d4a85a]'}`}>
-              HIDEAWAY RESORT
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={716}
+              height={522}
+              priority
+              className="h-10 md:h-12 w-auto object-contain"
+            />
+            <span className="flex flex-col items-start">
+              <span className="font-serif text-xl md:text-2xl tracking-widest leading-none">
+                FOREST
+              </span>
+              <span className={`text-[8px] tracking-[0.4em] font-light mt-1 ${effectiveScrolled ? 'text-[#8b5e3c]' : 'text-[#d4a85a]'}`}>
+                HIDEAWAY RESORT
+              </span>
             </span>
           </Link>
         </div>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex gap-4 text-[10px] lg:text-xs tracking-[0.14em] font-light uppercase items-center">
+        <nav className="hidden lg:flex gap-4 text-[10px] xl:text-xs tracking-[0.14em] font-light uppercase items-center">
           {mainNavItems.map((item) => (
             <NavMenuItem key={item.label} item={item} />
           ))}
@@ -52,64 +99,58 @@ export default function Navbar() {
         {/* "Book Now" pill — desktop */}
         <Link
           href="/contact"
-          className={`hidden md:inline-block ml-4 px-5 py-2 text-[10px] tracking-[0.18em] uppercase font-light border transition-all duration-300 ${
+          className={`group/btn relative hidden lg:inline-block ml-4 overflow-hidden px-5 py-2 text-[10px] tracking-[0.18em] uppercase font-light border transition-colors duration-300 ${
             scrolled
-              ? 'border-[#c8923a] text-[#c8923a] hover:bg-[#c8923a] hover:text-white'
-              : 'border-[#d4a85a] text-[#d4a85a] hover:bg-[#d4a85a] hover:text-[#1c2316]'
+              ? 'border-[#c8923a] text-[#c8923a]'
+              : 'border-[#d4a85a] text-[#d4a85a]'
           }`}
         >
-          Book Now
+          <span
+            className={`absolute inset-0 [clip-path:circle(0%_at_50%_50%)] group-hover/btn:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/btn:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out ${
+              scrolled ? 'bg-[#c8923a]' : 'bg-[#d4a85a]'
+            }`}
+          />
+          <span
+            className={`relative z-10 transition-colors duration-500 ${
+              scrolled ? 'group-hover/btn:text-white' : 'group-hover/btn:text-[#1c2316]'
+            }`}
+          >
+            Book Now
+          </span>
         </Link>
 
         {/* Mobile hamburger */}
-        <div className="md:hidden ml-auto">
+        <div className="lg:hidden ml-auto">
           <button
             aria-label="Toggle navigation menu"
             onClick={() => setMobileOpen((prev) => !prev)}
             className="flex flex-col space-y-[6px] focus:outline-none p-2"
           >
-            <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-              className={`block w-6 h-px transition-colors ${scrolled ? 'bg-[#1e1a14]' : 'bg-white'}`}
-            />
-            <motion.span
-              animate={{ opacity: mobileOpen ? 0 : 1 }}
-              className={`block w-6 h-px transition-colors ${scrolled ? 'bg-[#1e1a14]' : 'bg-white'}`}
-            />
-            <motion.span
-              animate={mobileOpen ? { rotate: -45, y: -7, width: 24 } : { rotate: 0, y: 0, width: 16 }}
-              className={`block h-px transition-colors ${scrolled ? 'bg-[#1e1a14]' : 'bg-white'}`}
-            />
+            <span className={`block w-6 h-px transition-colors ${effectiveScrolled ? 'bg-[#1e1a14]' : 'bg-white'}`} />
+            <span className={`block w-6 h-px transition-colors ${effectiveScrolled ? 'bg-[#1e1a14]' : 'bg-white'}`} />
+            <span className={`block w-4 h-px transition-colors ${effectiveScrolled ? 'bg-[#1e1a14]' : 'bg-white'}`} />
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <AnimatePresence initial={false}>
-        {mobileOpen && (
-        <motion.div
-          key="mobile-menu"
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          className={`md:hidden overflow-hidden border-t ${scrolled ? 'border-[#e8d8c0] bg-[#faf6ef]' : 'border-white/10 bg-[#1c2316]/95 backdrop-blur-sm'}`}
-        >
+      {mobileOpen && (
+        <div className={`lg:hidden border-t ${effectiveScrolled ? 'border-[#e8d8c0] bg-[#faf6ef]' : 'border-white/10 bg-[#1c2316]/95 backdrop-blur-sm'}`}>
           <nav className="px-6 py-6 flex flex-col gap-4 text-xs tracking-[0.18em] uppercase">
             {mainNavItems.map((item) => (
               <NavMenuItem key={item.label} item={item} mobile onNavigate={() => setMobileOpen(false)} />
             ))}
-            <Link
+            <CtaLink
               href="/contact"
               onClick={() => setMobileOpen(false)}
-              className="mt-2 inline-block px-5 py-2.5 border border-[#c8923a] text-[#c8923a] text-[11px] tracking-[0.18em] uppercase text-center hover:bg-[#c8923a] hover:text-white transition-all"
+              variant="gold"
+              className="mt-2 px-5 py-2.5 text-[11px] tracking-[0.18em] text-center"
             >
               Book Now
-            </Link>
+            </CtaLink>
           </nav>
-        </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+        </div>
+      )}
+    </header>
   );
 }

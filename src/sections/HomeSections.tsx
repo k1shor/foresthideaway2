@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import MotionReveal from "@/components/animation/MotionReveal";
+import NewsletterForm from "./NewsletterForm";
+import CtaLink from "@/components/ui/CtaLink";
 
 /* ─── Data ─────────────────────────────────────────── */
 
@@ -116,7 +117,7 @@ export default function HomeSections() {
       {/* ── 1. Resort Intro ── */}
       <section className="bg-[#f5ede0] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-14 items-center">
-          <MotionReveal direction="right">
+          <div>
             <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-5">
               The Resort
             </p>
@@ -135,9 +136,9 @@ export default function HomeSections() {
             >
               Our Story
             </Link>
-          </MotionReveal>
+          </div>
           {/* Resort image */}
-          <MotionReveal className="relative overflow-hidden h-80 md:h-[420px]" direction="left" delay={0.08}>
+          <div className="relative overflow-hidden h-80 md:h-[420px]">
             <Image
               src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80&fit=crop"
               alt="Luxury forest eco-lodge at Forest Hideaway Resort"
@@ -146,13 +147,13 @@ export default function HomeSections() {
               sizes="(max-width: 768px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-[#1c2316]/10" />
-          </MotionReveal>
+          </div>
         </div>
       </section>
 
       {/* ── 2. Quote ── */}
       <section className="bg-[#1c2316] text-[#f5ede0] py-24 md:py-28">
-        <MotionReveal className="max-w-5xl mx-auto px-6 md:px-12 text-center" direction="none">
+        <div className="max-w-5xl mx-auto px-6 md:px-12 text-center">
           <div className="w-px h-8 bg-[#c8923a]/50 mx-auto mb-8" />
           <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-7">
             A Note From The Wild
@@ -162,13 +163,13 @@ export default function HomeSections() {
             a calmer heart than you arrived with.&rdquo;
           </blockquote>
           <div className="w-px h-8 bg-[#c8923a]/50 mx-auto mt-8" />
-        </MotionReveal>
+        </div>
       </section>
 
       {/* ── 3. Map / Key Info ── */}
       <section id="map" className="bg-[#ede0cc] py-20 md:py-24">
         <div className="max-w-6xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-          <MotionReveal direction="right">
+          <div>
             <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">
               Map &amp; Key Info
             </p>
@@ -194,17 +195,17 @@ export default function HomeSections() {
                 </li>
               ))}
             </ul>
-          </MotionReveal>
-          <MotionReveal className="text-[#7a6852] flex justify-center md:justify-end" direction="left" delay={0.08}>
+          </div>
+          <div className="text-[#7a6852] flex justify-center md:justify-end">
             <BardiaMapOutline />
-          </MotionReveal>
+          </div>
         </div>
       </section>
 
       {/* ── 4. Packages ── */}
       <section id="packages" className="bg-[#faf6ef] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
-          <MotionReveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
             <div>
               <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-3">
                 Stay With Us
@@ -215,19 +216,21 @@ export default function HomeSections() {
             </div>
             <Link
               href="/packages"
-              className="text-xs tracking-[0.2em] uppercase text-[#8b5e3c] border-b border-[#c8923a] pb-0.5 hover:text-[#c8923a] transition-colors shrink-0"
+              className="group/link relative inline-block overflow-hidden text-xs tracking-[0.2em] uppercase text-[#8b5e3c] border-b border-[#c8923a] px-2 py-1.5 -mx-2 -my-1.5 shrink-0 transition-colors duration-500"
             >
-              View All Packages
+              <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
+              <span className="relative z-10 group-hover/link:text-[#c8923a] transition-colors duration-500">
+                View All Packages
+              </span>
             </Link>
-          </MotionReveal>
+          </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {packages.map((pkg, index) => (
-              <MotionReveal
-                as="article"
+            {packages.map((pkg) => (
+              <Link
                 key={pkg.name}
-                delay={index * 0.1}
-                className="group bg-white border border-[#e8d8c0] overflow-hidden hover:border-[#c8923a] transition-colors duration-300"
+                href={pkg.href}
+                className="group bg-white border border-[#e8d8c0] overflow-hidden hover:border-[#c8923a] transition-colors duration-300 block"
               >
                 {/* Image */}
                 <div className="relative h-52 overflow-hidden">
@@ -251,14 +254,14 @@ export default function HomeSections() {
                   </p>
                   <h4 className="font-serif text-xl text-[#1e1a14] mb-3">{pkg.name}</h4>
                   <p className="text-[#4a3a28] text-sm leading-7 mb-5">{pkg.details}</p>
-                  <Link
-                    href={pkg.href}
-                    className="text-[10px] tracking-[0.2em] uppercase text-[#c8923a] hover:text-[#8b5e3c] transition-colors"
-                  >
-                    Discover →
-                  </Link>
+                  <span className="group/link relative inline-flex items-center overflow-hidden px-2 py-1 -mx-2 -my-1 text-[10px] tracking-[0.2em] uppercase text-[#c8923a] transition-colors duration-500">
+                    <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
+                    <span className="relative z-10 group-hover/link:text-[#8b5e3c] transition-colors duration-500">
+                      Discover →
+                    </span>
+                  </span>
                 </div>
-              </MotionReveal>
+              </Link>
             ))}
           </div>
         </div>
@@ -267,15 +270,13 @@ export default function HomeSections() {
       {/* ── 5. Video / Visual Story ── */}
       <section className="bg-[#2a3320] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
-          <MotionReveal>
-            <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">
-              Watch
-            </p>
-            <h3 className="font-serif text-3xl md:text-5xl text-[#f5ede0] mb-10">
-              Bardia In Motion
-            </h3>
-          </MotionReveal>
-          <MotionReveal className="relative overflow-hidden min-h-80 md:min-h-[28rem] flex items-end border border-[#3d4f2c]" delay={0.08}>
+          <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">
+            Watch
+          </p>
+          <h3 className="font-serif text-3xl md:text-5xl text-[#f5ede0] mb-10">
+            Bardia In Motion
+          </h3>
+          <div className="relative overflow-hidden min-h-80 md:min-h-[28rem] flex items-end border border-[#3d4f2c]">
             <Image
               src="/assets/elephants-in-lake.jpg"
               alt="Elephants in Bardia National Park"
@@ -290,23 +291,24 @@ export default function HomeSections() {
                 finished crafting our own story, explore the wild world you&apos;ll step
                 into — through the lens of those who know it best.
               </p>
-              <Link
+              <CtaLink
                 href="https://www.youtube.com/results?search_query=bardia+national+park+nepal"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-7 py-3.5 border border-[#d4a85a] text-[#f5ede0] uppercase tracking-[0.18em] text-xs hover:bg-[#d4a85a] hover:text-[#1c2316] transition-all duration-300"
+                variant="cream"
+                className="px-7 py-3.5 tracking-[0.18em] text-xs"
               >
                 Watch Bardia Stories
-              </Link>
+              </CtaLink>
             </div>
-          </MotionReveal>
+          </div>
         </div>
       </section>
 
       {/* ── 6. Signature Experiences ── */}
       <section id="experiences" className="bg-[#f5ede0] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
-          <MotionReveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
             <div>
               <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-3">
                 Signature Experiences
@@ -317,20 +319,18 @@ export default function HomeSections() {
             </div>
             <Link
               href="/activities"
-              className="text-xs tracking-[0.2em] uppercase text-[#8b5e3c] border-b border-[#c8923a] pb-0.5 hover:text-[#c8923a] transition-colors shrink-0"
+              className="group/link relative inline-block overflow-hidden text-xs tracking-[0.2em] uppercase text-[#8b5e3c] border-b border-[#c8923a] px-2 py-1.5 -mx-2 -my-1.5 shrink-0 transition-colors duration-500"
             >
-              All Activities
+              <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
+              <span className="relative z-10 group-hover/link:text-[#c8923a] transition-colors duration-500">
+                All Activities
+              </span>
             </Link>
-          </MotionReveal>
+          </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {signatureExperiences.map((item, index) => (
-              <MotionReveal
-                as="article"
-                key={item.title}
-                className="group"
-                delay={index * 0.1}
-              >
+              <Link key={item.title} href={item.href} className="group block">
                 {/* Image */}
                 <div className="relative h-60 overflow-hidden mb-5">
                   <Image
@@ -349,13 +349,13 @@ export default function HomeSections() {
                 {/* Text */}
                 <h4 className="font-serif text-xl text-[#1e1a14] mb-3">{item.title}</h4>
                 <p className="text-[#4a3a28] text-sm leading-7 mb-4">{item.description}</p>
-                <Link
-                  href={item.href}
-                  className="text-[10px] tracking-[0.2em] uppercase text-[#c8923a] hover:text-[#8b5e3c] transition-colors"
-                >
-                  Learn More →
-                </Link>
-              </MotionReveal>
+                <span className="group/link relative inline-flex items-center overflow-hidden px-2 py-1 -mx-2 -my-1 text-[10px] tracking-[0.2em] uppercase text-[#c8923a] transition-colors duration-500">
+                  <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
+                  <span className="relative z-10 group-hover/link:text-[#8b5e3c] transition-colors duration-500">
+                    Learn More →
+                  </span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
@@ -363,7 +363,7 @@ export default function HomeSections() {
 
       {/* ── 7. Newsletter ── */}
       <section id="newsletter" className="bg-[#1c2316] text-[#f5ede0] py-20 md:py-24">
-        <MotionReveal className="max-w-5xl mx-auto px-6 md:px-12 text-center" direction="none">
+        <div className="max-w-5xl mx-auto px-6 md:px-12 text-center">
           <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">
             Stay Connected
           </p>
@@ -374,30 +374,14 @@ export default function HomeSections() {
             Sign up for seasonal offers, safari stories, and travel notes from
             Forest Hideaway Resort — delivered quietly, like the forest itself.
           </p>
-          <form className="max-w-xl mx-auto flex flex-col sm:flex-row gap-3">
-            <label htmlFor="newsletter-email" className="sr-only">
-              Email Address
-            </label>
-            <input
-              id="newsletter-email"
-              type="email"
-              placeholder="Your email address"
-              className="flex-1 px-5 py-3.5 bg-transparent border border-[#3d4f2c] text-[#f5ede0] placeholder:text-[#7a6852] focus:outline-none focus:border-[#c8923a] transition-colors"
-            />
-            <button
-              type="submit"
-              className="px-7 py-3.5 border border-[#c8923a] text-[#f5ede0] uppercase tracking-[0.18em] text-xs hover:bg-[#c8923a] hover:text-[#1c2316] transition-all duration-300 whitespace-nowrap"
-            >
-              Sign Me Up
-            </button>
-          </form>
-        </MotionReveal>
+          <NewsletterForm />
+        </div>
       </section>
 
       {/* ── 8. Instagram Gallery ── */}
       <section className="bg-[#faf6ef] py-20 md:py-24">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
-          <MotionReveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
               <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-3">
                 Instagram
@@ -414,7 +398,7 @@ export default function HomeSections() {
             >
               Follow Us
             </Link>
-          </MotionReveal>
+          </div>
 
           {/* 4-column photo grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
@@ -426,10 +410,9 @@ export default function HomeSections() {
                 src: "https://images.unsplash.com/photo-1560743173-567a3b5658b1?w=600&q=80&fit=crop",
                 alt: "Bird life in Bardia National Park",
               },
-            ].map((photo, index) => (
-              <MotionReveal
+            ].map((photo) => (
+              <div
                 key={photo.src}
-                delay={index * 0.07}
                 className="relative h-44 md:h-64 overflow-hidden group"
               >
                 <Image
@@ -440,7 +423,7 @@ export default function HomeSections() {
                   sizes="(max-width: 768px) 50vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-[#1c2316]/0 group-hover:bg-[#1c2316]/25 transition-colors duration-500" />
-              </MotionReveal>
+              </div>
             ))}
           </div>
         </div>

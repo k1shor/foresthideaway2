@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import CtaLink from '@/components/ui/CtaLink';
 
 type Highlight = {
   title: string;
@@ -81,12 +81,9 @@ export default function StructuredPage({
         </div>
 
         <div className="max-w-6xl mx-auto px-6 md:px-12 mt-12">
-          <Link
-            href={ctaHref}
-            className="inline-block px-7 py-3.5 border border-[#c8923a] text-[#c8923a] uppercase tracking-[0.18em] text-xs hover:bg-[#c8923a] hover:text-white transition-all duration-300"
-          >
+          <CtaLink href={ctaHref} variant="gold" className="px-7 py-3.5 tracking-[0.18em] text-xs">
             {ctaLabel}
-          </Link>
+          </CtaLink>
         </div>
       </section>
     </>
