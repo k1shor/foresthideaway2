@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import NewsletterForm from "./NewsletterForm";
 import CtaLink from "@/components/ui/CtaLink";
+import { getPackages } from "@/lib/api/packages";
 
 /* ─── Data ─────────────────────────────────────────── */
 
@@ -14,35 +15,38 @@ type Package = {
   href: string;
 };
 
-const packages: Package[] = [
-  {
-    name: "Jungle Discovery",
-    duration: "2 nights · 3 days",
-    tag: "Short Escape",
-    details:
-      "Perfect for first-time visitors — guided jungle drives at dawn, a sunset viewpoint walk, and warm Tharu hospitality around the fire.",
-    img: "https://images.unsplash.com/photo-1504457047772-27faf1c00561?w=800&q=80&fit=crop",
-    href: "/packages/bardia-at-a-glance-tour-2-nights-3-days",
-  },
-  {
-    name: "Bardia Signature Stay",
-    duration: "3 nights · 4 days",
-    tag: "Most Popular",
-    details:
-      "A balanced safari rhythm — river-side afternoons, nature walks through sal forest, cultural evenings, and early morning game drives.",
-    img: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80&fit=crop",
-    href: "/packages/bardia-highlights-tour-3-nights-4-days",
-  },
-  {
-    name: "Complete Wilderness Retreat",
-    duration: "4 nights · 5 days",
-    tag: "Full Immersion",
-    details:
-      "A deeper Bardia journey with dawn explorations, Karnali river time, cultural encounters, and slow restorative afternoons.",
-    img: "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80&fit=crop",
-    href: "/packages/best-of-bardia-4-nights-5-days",
-  },
-];
+// const packages: Package[] = [
+//   {
+//     name: "Jungle Discovery",
+//     duration: "2 nights · 3 days",
+//     tag: "Short Escape",
+//     details:
+//       "Perfect for first-time visitors — guided jungle drives at dawn, a sunset viewpoint walk, and warm Tharu hospitality around the fire.",
+//     img: "https://images.unsplash.com/photo-1504457047772-27faf1c00561?w=800&q=80&fit=crop",
+//     href: "/packages/bardia-at-a-glance-tour-2-nights-3-days",
+//   },
+//   {
+//     name: "Bardia Signature Stay",
+//     duration: "3 nights · 4 days",
+//     tag: "Most Popular",
+//     details:
+//       "A balanced safari rhythm — river-side afternoons, nature walks through sal forest, cultural evenings, and early morning game drives.",
+//     img: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80&fit=crop",
+//     href: "/packages/bardia-highlights-tour-3-nights-4-days",
+//   },
+//   {
+//     name: "Complete Wilderness Retreat",
+//     duration: "4 nights · 5 days",
+//     tag: "Full Immersion",
+//     details:
+//       "A deeper Bardia journey with dawn explorations, Karnali river time, cultural encounters, and slow restorative afternoons.",
+//     img: "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80&fit=crop",
+//     href: "/packages/best-of-bardia-4-nights-5-days",
+//   },
+// ];
+
+
+const packages = await getPackages();
 
 type Experience = {
   title: string;
@@ -140,7 +144,7 @@ export default function HomeSections() {
           {/* Resort image */}
           <div className="relative overflow-hidden h-80 md:h-[420px]">
             <Image
-              src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80&fit=crop"
+              src="/assets/Homepage Jungle Meets Warm Hospitality.jpg"
               alt="Luxury forest eco-lodge at Forest Hideaway Resort"
               fill
               className="object-cover"
@@ -226,17 +230,17 @@ export default function HomeSections() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {packages.map((pkg) => (
+            {packages.slice(0,3).map((pkg) => (
               <Link
                 key={pkg.name}
-                href={pkg.href}
+                href={pkg.slug}
                 className="group bg-white border border-[#e8d8c0] overflow-hidden hover:border-[#c8923a] transition-colors duration-300 block"
               >
                 {/* Image */}
                 <div className="relative h-52 overflow-hidden">
                   <Image
                     src={pkg.img}
-                    alt={`${pkg.name} package — Forest Hideaway Resort`}
+                    alt={`${pkg.name} package`}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -253,7 +257,7 @@ export default function HomeSections() {
                     {pkg.duration}
                   </p>
                   <h4 className="font-serif text-xl text-[#1e1a14] mb-3">{pkg.name}</h4>
-                  <p className="text-[#4a3a28] text-sm leading-7 mb-5">{pkg.details}</p>
+                  <p className="text-[#4a3a28] text-sm leading-7 mb-5 truncate">{pkg.description}</p>
                   <span className="group/link relative inline-flex items-center overflow-hidden px-2 py-1 -mx-2 -my-1 text-[10px] tracking-[0.2em] uppercase text-[#c8923a] transition-colors duration-500">
                     <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
                     <span className="relative z-10 group-hover/link:text-[#8b5e3c] transition-colors duration-500">

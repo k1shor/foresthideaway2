@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+       {
+        protocol: 'http',
+        hostname: '13.140.172.142',
+        port: '',
+        pathname: '/api/uploads/**',
+      },
       {
         protocol: "https",
         hostname: "images.unsplash.com",
