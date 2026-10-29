@@ -205,6 +205,7 @@ export default function HomeSections() {
           </div>
         </div>
       </section>
+      
 
       {/* ── 4. Packages ── */}
       <section id="packages" className="bg-[#faf6ef] py-20 md:py-28">
