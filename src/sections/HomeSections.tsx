@@ -144,7 +144,7 @@ export default function HomeSections() {
           {/* Resort image */}
           <div className="relative overflow-hidden h-80 md:h-[420px]">
             <Image
-              src="/assets/HomepageJungleMeetsWarmHospitality.jpg"
+              src="/assets/HomepageJungleMeetsWarmHospitality.JPG"
               alt="Luxury forest eco-lodge at Forest Hideaway Resort"
               fill
               className="object-cover"
