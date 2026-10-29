@@ -144,7 +144,7 @@ export default function HomeSections() {
           {/* Resort image */}
           <div className="relative overflow-hidden h-80 md:h-[420px]">
             <Image
-              src="/assets/Homepage Jungle Meets Warm Hospitality.jpg"
+              src="/assets/HomepageJungleMeetsWarmHospitality.jpg"
               alt="Luxury forest eco-lodge at Forest Hideaway Resort"
               fill
               className="object-cover"
@@ -205,7 +205,7 @@ export default function HomeSections() {
           </div>
         </div>
       </section>
-      
+
 
       {/* ── 4. Packages ── */}
       <section id="packages" className="bg-[#faf6ef] py-20 md:py-28">
