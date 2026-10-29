@@ -3,6 +3,7 @@ import Image from "next/image";
 import NewsletterForm from "./NewsletterForm";
 import CtaLink from "@/components/ui/CtaLink";
 import { getPackages } from "@/lib/api/packages";
+import { getActivities } from "@/lib/api/activities";
 
 /* ─── Data ─────────────────────────────────────────── */
 
@@ -55,29 +56,30 @@ type Experience = {
   href: string;
 };
 
-const signatureExperiences: Experience[] = [
-  {
-    title: "Jeep Safari in Bardia",
-    description:
-      "Track tigers, elephants, and deer through sal forests and open grasslands with experienced naturalists and local guides.",
-    img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80&fit=crop",
-    href: "/activities/jeep-safari",
-  },
-  {
-    title: "Karnali River Adventure",
-    description:
-      "Cruise along quiet river stretches where gharial crocodiles, migratory birds, and dramatic skies frame the journey.",
-    img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop",
-    href: "/activities/karnali-river-rafting",
-  },
-  {
-    title: "Tharu Cultural Evening",
-    description:
-      "Share stories, traditional cuisine, and performances with the Tharu communities that have shaped Bardia's spirit for centuries.",
-    img: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80&fit=crop",
-    href: "/activities/tharu-cultural-program",
-  },
-];
+const signatureExperiences = await getActivities()
+// const signatureExperiences: Experience[] = [
+//   {
+//     title: "Jeep Safari in Bardia",
+//     description:
+//       "Track tigers, elephants, and deer through sal forests and open grasslands with experienced naturalists and local guides.",
+//     img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80&fit=crop",
+//     href: "/activities/jeep-safari",
+//   },
+//   {
+//     title: "Karnali River Adventure",
+//     description:
+//       "Cruise along quiet river stretches where gharial crocodiles, migratory birds, and dramatic skies frame the journey.",
+//     img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop",
+//     href: "/activities/karnali-river-rafting",
+//   },
+//   {
+//     title: "Tharu Cultural Evening",
+//     description:
+//       "Share stories, traditional cuisine, and performances with the Tharu communities that have shaped Bardia's spirit for centuries.",
+//     img: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80&fit=crop",
+//     href: "/activities/tharu-cultural-program",
+//   },
+// ];
 
 /* ─── Map SVG ──────────────────────────────────────── */
 
@@ -334,8 +336,8 @@ export default function HomeSections() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {signatureExperiences.map((item, index) => (
-              <Link key={item.title} href={item.href} className="group block">
+            {signatureExperiences.slice(0,3).map((item, index) => (
+              <Link key={item.title} href={item.slug} className="group block">
                 {/* Image */}
                 <div className="relative h-60 overflow-hidden mb-5">
                   <Image
@@ -353,7 +355,7 @@ export default function HomeSections() {
                 </div>
                 {/* Text */}
                 <h4 className="font-serif text-xl text-[#1e1a14] mb-3">{item.title}</h4>
-                <p className="text-[#4a3a28] text-sm leading-7 mb-4">{item.description}</p>
+                <p className="text-[#4a3a28] text-sm leading-7 mb-4 truncate">{item.description}</p>
                 <span className="group/link relative inline-flex items-center overflow-hidden px-2 py-1 -mx-2 -my-1 text-[10px] tracking-[0.2em] uppercase text-[#c8923a] transition-colors duration-500">
                   <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
                   <span className="relative z-10 group-hover/link:text-[#8b5e3c] transition-colors duration-500">
