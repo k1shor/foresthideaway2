@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   title: "Packages — Forest Hideaway Resort | Bardia, Nepal",
   description:
     "Explore our curated safari packages — 2, 3, or 4-night stays in Bardia National Park with guided game drives, cultural experiences, and warm jungle hospitality.",
-};
+}; 
+
 
 export default async function PackagesPage() {
   const packages = await getPackages();
