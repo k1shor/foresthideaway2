@@ -236,7 +236,7 @@ export default function HomeSections() {
             {packages.slice(0,3).map((pkg) => (
               <Link
                 key={pkg.name}
-                href={pkg.slug}
+                href={`/packages/${pkg.slug}`}
                 className="group bg-white border border-[#e8d8c0] overflow-hidden hover:border-[#c8923a] transition-colors duration-300 block"
               >
                 {/* Image */}
@@ -337,7 +337,7 @@ export default function HomeSections() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {signatureExperiences.slice(0,3).map((item, index) => (
-              <Link key={item.title} href={item.slug} className="group block">
+              <Link key={item.title} href={`/activities/${item.slug}`} className="group block">
                 {/* Image */}
                 <div className="relative h-60 overflow-hidden mb-5">
                   <Image
