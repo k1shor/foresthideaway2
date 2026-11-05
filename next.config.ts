@@ -16,12 +16,6 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "5000",
       },
-      {
-        protocol: 'http',
-        hostname: '13.140.172.142',
-        port: '',
-        pathname: '/api/**',
-      },
     ],
   },
   async rewrites() {
