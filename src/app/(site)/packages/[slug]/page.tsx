@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getPackageBySlug } from '@/lib/api/packages';
+import { getPackagesPage } from '@/lib/api/pages';
 import CtaLink from '@/components/ui/CtaLink';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -29,6 +29,8 @@ export default async function PackageDetailPage({ params }: Props) {
   } catch {
     notFound();
   }
+
+  const { detailCta } = await getPackagesPage();
 
   return (
     <>
@@ -145,17 +147,18 @@ export default async function PackageDetailPage({ params }: Props) {
       {/* ── CTA ── */}
       <section className="bg-[#1c2316] py-14 md:py-20">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">Ready to Book?</p>
-          <h2 className="font-serif text-3xl text-[#f5ede0] mb-6">Start Your Bardia Journey</h2>
-          <p className="text-[#c8baa0] text-sm mb-8 max-w-md mx-auto">
-            Reach out and we&apos;ll confirm availability, tailor the package to your travel dates, and answer any questions.
-          </p>
+          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">{detailCta.label}</p>
+          <h2 className="font-serif text-3xl text-[#f5ede0] mb-6">{detailCta.heading}</h2>
+          <p
+            className="text-[#c8baa0] text-sm mb-8 max-w-md mx-auto"
+            dangerouslySetInnerHTML={{ __html: detailCta.body }}
+          />
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <CtaLink href="/contact" variant="cream" className="px-8 py-4 tracking-[0.2em] text-xs">
-              Enquire Now
+              {detailCta.button1Label}
             </CtaLink>
             <CtaLink href="/packages" variant="muted" className="px-8 py-4 tracking-[0.2em] text-xs">
-              All Packages
+              {detailCta.button2Label}
             </CtaLink>
           </div>
         </div>

@@ -1,14 +1,19 @@
 import React from 'react';
 import CtaLink from '@/components/ui/CtaLink';
+import type { HomePageContent } from '@/lib/api/types';
 
-export default function Hero() {
+type HeroProps = {
+  content: HomePageContent['hero'];
+};
+
+export default function Hero({ content }: HeroProps) {
   return (
     <section className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Background image */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url("/assets/tiger.jpg")',
+          backgroundImage: `url("${content.image}")`,
           backgroundPosition: "center 52%",
         }}
       >
@@ -21,25 +26,24 @@ export default function Hero() {
       {/* Hero content */}
       <div className="relative z-10 text-center flex flex-col items-center px-4 w-full mt-20">
         <p className="text-[10px] md:text-[11px] text-[#d4a85a] uppercase tracking-[0.45em] mb-5 font-light">
-          More than a safari
+          {content.tag}
         </p>
 
         <h1 className="text-4xl md:text-6xl lg:text-[5rem] font-serif text-white tracking-wide leading-[1.08] max-w-4xl mx-auto mb-7 font-normal">
-          THE HOME OF<br />THE SLOW SAFARI
+          {content.headingLine1}<br />{content.headingLine2}
         </h1>
 
         {/* Thin amber divider */}
         <div className="w-px h-10 bg-[#d4a85a]/60 mb-7" />
 
-        <p className="text-white/80 font-light text-sm md:text-base max-w-lg mx-auto leading-relaxed mb-10 tracking-wide">
-          In the wild edge of Bardia, mornings begin with birdsong and golden
-          river mist. An unhurried escape where jungle rhythms, local culture,
-          and warm hospitality meet.
-        </p>
+        <p
+          className="text-white/80 font-light text-sm md:text-base max-w-lg mx-auto leading-relaxed mb-10 tracking-wide"
+          dangerouslySetInnerHTML={{ __html: content.subtext }}
+        />
 
         {/* Single CTA */}
         <CtaLink href="/packages" variant="cream" className="px-8 py-3.5 tracking-[0.2em] text-xs font-light">
-          Explore Packages
+          {content.ctaLabel}
         </CtaLink>
       </div>
 
@@ -58,7 +62,7 @@ export default function Hero() {
             <path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z" />
             <circle cx="12" cy="10" r="2.5" />
           </svg>
-          <span>Bardia National Park, Nepal</span>
+          <span>{content.locationTag}</span>
         </div>
       </div>
     </section>

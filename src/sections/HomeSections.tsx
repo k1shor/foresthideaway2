@@ -2,84 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import NewsletterForm from "./NewsletterForm";
 import CtaLink from "@/components/ui/CtaLink";
-import { getPackages } from "@/lib/api/packages";
-import { getActivities } from "@/lib/api/activities";
-
-/* ─── Data ─────────────────────────────────────────── */
-
-type Package = {
-  name: string;
-  duration: string;
-  tag: string;
-  details: string;
-  img: string;
-  href: string;
-};
-
-// const packages: Package[] = [
-//   {
-//     name: "Jungle Discovery",
-//     duration: "2 nights · 3 days",
-//     tag: "Short Escape",
-//     details:
-//       "Perfect for first-time visitors — guided jungle drives at dawn, a sunset viewpoint walk, and warm Tharu hospitality around the fire.",
-//     img: "https://images.unsplash.com/photo-1504457047772-27faf1c00561?w=800&q=80&fit=crop",
-//     href: "/packages/bardia-at-a-glance-tour-2-nights-3-days",
-//   },
-//   {
-//     name: "Bardia Signature Stay",
-//     duration: "3 nights · 4 days",
-//     tag: "Most Popular",
-//     details:
-//       "A balanced safari rhythm — river-side afternoons, nature walks through sal forest, cultural evenings, and early morning game drives.",
-//     img: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80&fit=crop",
-//     href: "/packages/bardia-highlights-tour-3-nights-4-days",
-//   },
-//   {
-//     name: "Complete Wilderness Retreat",
-//     duration: "4 nights · 5 days",
-//     tag: "Full Immersion",
-//     details:
-//       "A deeper Bardia journey with dawn explorations, Karnali river time, cultural encounters, and slow restorative afternoons.",
-//     img: "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80&fit=crop",
-//     href: "/packages/best-of-bardia-4-nights-5-days",
-//   },
-// ];
-
-
-const packages = await getPackages();
-
-type Experience = {
-  title: string;
-  description: string;
-  img: string;
-  href: string;
-};
-
-const signatureExperiences = await getActivities()
-// const signatureExperiences: Experience[] = [
-//   {
-//     title: "Jeep Safari in Bardia",
-//     description:
-//       "Track tigers, elephants, and deer through sal forests and open grasslands with experienced naturalists and local guides.",
-//     img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80&fit=crop",
-//     href: "/activities/jeep-safari",
-//   },
-//   {
-//     title: "Karnali River Adventure",
-//     description:
-//       "Cruise along quiet river stretches where gharial crocodiles, migratory birds, and dramatic skies frame the journey.",
-//     img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop",
-//     href: "/activities/karnali-river-rafting",
-//   },
-//   {
-//     title: "Tharu Cultural Evening",
-//     description:
-//       "Share stories, traditional cuisine, and performances with the Tharu communities that have shaped Bardia's spirit for centuries.",
-//     img: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80&fit=crop",
-//     href: "/activities/tharu-cultural-program",
-//   },
-// ];
+import type { Activity, HomePageContent, Package } from "@/lib/api/types";
 
 /* ─── Map SVG ──────────────────────────────────────── */
 
@@ -117,7 +40,13 @@ function BardiaMapOutline() {
 
 /* ─── Sections ─────────────────────────────────────── */
 
-export default function HomeSections() {
+type HomeSectionsProps = {
+  content: Omit<HomePageContent, '_id' | 'hero'>;
+  packages: Package[];
+  activities: Activity[];
+};
+
+export default function HomeSections({ content, packages, activities }: HomeSectionsProps) {
   return (
     <>
       {/* ── 1. Resort Intro ── */}
@@ -125,28 +54,26 @@ export default function HomeSections() {
         <div className="max-w-6xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-14 items-center">
           <div>
             <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-5">
-              The Resort
+              {content.resort.label}
             </p>
             <h2 className="font-serif text-3xl md:text-5xl text-[#1e1a14] leading-tight mb-6">
-              Where the Jungle Meets Warm Hospitality
+              {content.resort.heading}
             </h2>
-            <p className="text-[#4a3a28] leading-8 max-w-lg mb-8">
-              Forest Hideaway Resort sits on the quiet fringe of Bardia National Park —
-              a place designed for travelers who value nature, comfort, and meaningful time.
-              From early game drives to slow evenings by the fire, every part of your stay
-              moves to the rhythm of the jungle.
-            </p>
+            <p
+              className="text-[#4a3a28] leading-8 max-w-lg mb-8"
+              dangerouslySetInnerHTML={{ __html: content.resort.body }}
+            />
             <Link
               href="/about-us"
               className="text-xs tracking-[0.22em] uppercase text-[#8b5e3c] border-b border-[#c8923a] pb-0.5 hover:text-[#c8923a] transition-colors duration-200"
             >
-              Our Story
+              {content.resort.linkLabel}
             </Link>
           </div>
           {/* Resort image */}
           <div className="relative overflow-hidden h-80 md:h-[420px]">
             <Image
-              src="/assets/HomepageJungleMeetsWarmHospitality.JPG"
+              src={content.resort.image}
               alt="Luxury forest eco-lodge at Forest Hideaway Resort"
               fill
               className="object-cover"
@@ -162,12 +89,12 @@ export default function HomeSections() {
         <div className="max-w-5xl mx-auto px-6 md:px-12 text-center">
           <div className="w-px h-8 bg-[#c8923a]/50 mx-auto mb-8" />
           <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-7">
-            A Note From The Wild
+            {content.quote.label}
           </p>
-          <blockquote className="font-serif text-2xl md:text-[2.4rem] leading-snug max-w-3xl mx-auto">
-            &ldquo;Stay long enough to hear the forest breathe, and you leave with
-            a calmer heart than you arrived with.&rdquo;
-          </blockquote>
+          <blockquote
+            className="font-serif text-2xl md:text-[2.4rem] leading-snug max-w-3xl mx-auto"
+            dangerouslySetInnerHTML={{ __html: `&ldquo;${content.quote.text}&rdquo;` }}
+          />
           <div className="w-px h-8 bg-[#c8923a]/50 mx-auto mt-8" />
         </div>
       </section>
@@ -177,23 +104,21 @@ export default function HomeSections() {
         <div className="max-w-6xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
             <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">
-              Map &amp; Key Info
+              {content.mapInfo.label}
             </p>
             <h3 className="font-serif text-3xl md:text-4xl text-[#1e1a14] mb-5">
-              Where The Jungle Meets The River
+              {content.mapInfo.heading}
             </h3>
-            <p className="text-[#4a3a28] leading-8 mb-7">
-              Bardia National Park, in Nepal&apos;s western Terai, is one of the country&apos;s
-              most pristine wilderness areas — known for Bengal tiger habitat, rich
-              birdlife, and river ecosystems shaped by the Karnali. The resort sits
-              at the park&apos;s fringe, making dawn and dusk safaris seamlessly immersive.
-            </p>
+            <p
+              className="text-[#4a3a28] leading-8 mb-7"
+              dangerouslySetInnerHTML={{ __html: content.mapInfo.body }}
+            />
             <ul className="space-y-3.5">
               {[
-                { icon: "📍", text: "Near Bardia NP gateway, Bardiya, Nepal" },
-                { icon: "🌿", text: "Ideal Season: October to May" },
-                { icon: "🐅", text: "Best For: Wildlife safaris, birding & cultural stays" },
-                { icon: "✈️", text: "Nearest Airport: Nepalgunj (2 hrs)" },
+                { icon: "📍", text: content.mapInfo.gatewayText },
+                { icon: "🌿", text: content.mapInfo.seasonText },
+                { icon: "🐅", text: content.mapInfo.bestForText },
+                { icon: "✈️", text: content.mapInfo.airportText },
               ].map((item) => (
                 <li key={item.text} className="flex items-start gap-3 text-[#4a3a28] text-sm leading-6">
                   <span className="mt-0.5 text-base">{item.icon}</span>
@@ -208,17 +133,16 @@ export default function HomeSections() {
         </div>
       </section>
 
-
       {/* ── 4. Packages ── */}
       <section id="packages" className="bg-[#faf6ef] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
             <div>
               <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-3">
-                Stay With Us
+                {content.packagesSection.label}
               </p>
               <h3 className="font-serif text-3xl md:text-5xl text-[#1e1a14]">
-                Our Packages
+                {content.packagesSection.heading}
               </h3>
             </div>
             <Link
@@ -233,9 +157,9 @@ export default function HomeSections() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {packages.slice(0,3).map((pkg) => (
+            {packages.map((pkg) => (
               <Link
-                key={pkg.name}
+                key={pkg._id}
                 href={`/packages/${pkg.slug}`}
                 className="group bg-white border border-[#e8d8c0] overflow-hidden hover:border-[#c8923a] transition-colors duration-300 block"
               >
@@ -243,7 +167,7 @@ export default function HomeSections() {
                 <div className="relative h-52 overflow-hidden">
                   <Image
                     src={pkg.img}
-                    alt={`${pkg.name} package`}
+                    alt={`${pkg.name} package — Forest Hideaway Resort`}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -260,7 +184,7 @@ export default function HomeSections() {
                     {pkg.duration}
                   </p>
                   <h4 className="font-serif text-xl text-[#1e1a14] mb-3">{pkg.name}</h4>
-                  <p className="text-[#4a3a28] text-sm leading-7 mb-5 truncate">{pkg.description}</p>
+                  <p className="text-[#4a3a28] text-sm leading-7 mb-5">{pkg.description}</p>
                   <span className="group/link relative inline-flex items-center overflow-hidden px-2 py-1 -mx-2 -my-1 text-[10px] tracking-[0.2em] uppercase text-[#c8923a] transition-colors duration-500">
                     <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
                     <span className="relative z-10 group-hover/link:text-[#8b5e3c] transition-colors duration-500">
@@ -278,14 +202,14 @@ export default function HomeSections() {
       <section className="bg-[#2a3320] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
           <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">
-            Watch
+            {content.video.label}
           </p>
           <h3 className="font-serif text-3xl md:text-5xl text-[#f5ede0] mb-10">
-            Bardia In Motion
+            {content.video.heading}
           </h3>
           <div className="relative overflow-hidden min-h-80 md:min-h-[28rem] flex items-end border border-[#3d4f2c]">
             <Image
-              src="/assets/elephants-in-lake.jpg"
+              src={content.video.image}
               alt="Elephants in Bardia National Park"
               fill
               className="object-cover opacity-55"
@@ -293,19 +217,18 @@ export default function HomeSections() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1c2316]/90 via-[#1c2316]/30 to-transparent" />
             <div className="relative z-10 p-8 md:p-12 max-w-xl">
-              <p className="text-[#e8d5b5] leading-8 mb-7 text-sm md:text-base">
-                Bardia is one of Asia&apos;s last great wilderness frontiers. Until we&apos;ve
-                finished crafting our own story, explore the wild world you&apos;ll step
-                into — through the lens of those who know it best.
-              </p>
+              <p
+                className="text-[#e8d5b5] leading-8 mb-7 text-sm md:text-base"
+                dangerouslySetInnerHTML={{ __html: content.video.body }}
+              />
               <CtaLink
-                href="https://www.youtube.com/results?search_query=bardia+national+park+nepal"
+                href={content.video.ctaHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="cream"
                 className="px-7 py-3.5 tracking-[0.18em] text-xs"
               >
-                Watch Bardia Stories
+                {content.video.ctaLabel}
               </CtaLink>
             </div>
           </div>
@@ -318,10 +241,10 @@ export default function HomeSections() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
             <div>
               <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-3">
-                Signature Experiences
+                {content.experiencesSection.label}
               </p>
               <h3 className="font-serif text-3xl md:text-5xl text-[#1e1a14]">
-                Three Ways To Feel Bardia
+                {content.experiencesSection.heading}
               </h3>
             </div>
             <Link
@@ -336,8 +259,8 @@ export default function HomeSections() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {signatureExperiences.slice(0,3).map((item, index) => (
-              <Link key={item.title} href={`/activities/${item.slug}`} className="group block">
+            {activities.map((item, index) => (
+              <Link key={item._id} href={`/activities/${item.slug}`} className="group block">
                 {/* Image */}
                 <div className="relative h-60 overflow-hidden mb-5">
                   <Image
@@ -355,7 +278,7 @@ export default function HomeSections() {
                 </div>
                 {/* Text */}
                 <h4 className="font-serif text-xl text-[#1e1a14] mb-3">{item.title}</h4>
-                <p className="text-[#4a3a28] text-sm leading-7 mb-4 truncate">{item.description}</p>
+                <p className="text-[#4a3a28] text-sm leading-7 mb-4">{item.description}</p>
                 <span className="group/link relative inline-flex items-center overflow-hidden px-2 py-1 -mx-2 -my-1 text-[10px] tracking-[0.2em] uppercase text-[#c8923a] transition-colors duration-500">
                   <span className="absolute inset-0 bg-[#c8923a]/10 [clip-path:circle(0%_at_50%_50%)] group-hover/link:[clip-path:circle(150%_at_50%_50%)] opacity-0 group-hover/link:opacity-100 transition-[clip-path,opacity] duration-[900ms] ease-in-out" />
                   <span className="relative z-10 group-hover/link:text-[#8b5e3c] transition-colors duration-500">
@@ -372,15 +295,15 @@ export default function HomeSections() {
       <section id="newsletter" className="bg-[#1c2316] text-[#f5ede0] py-20 md:py-24">
         <div className="max-w-5xl mx-auto px-6 md:px-12 text-center">
           <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">
-            Stay Connected
+            {content.newsletter.label}
           </p>
           <h3 className="font-serif text-3xl md:text-5xl mb-5">
-            Postcards From The Jungle
+            {content.newsletter.heading}
           </h3>
-          <p className="max-w-xl mx-auto text-[#c8baa0] leading-8 mb-10 text-sm">
-            Sign up for seasonal offers, safari stories, and travel notes from
-            Forest Hideaway Resort — delivered quietly, like the forest itself.
-          </p>
+          <p
+            className="max-w-xl mx-auto text-[#c8baa0] leading-8 mb-10 text-sm"
+            dangerouslySetInnerHTML={{ __html: content.newsletter.body }}
+          />
           <NewsletterForm />
         </div>
       </section>
@@ -391,14 +314,14 @@ export default function HomeSections() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
               <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-3">
-                Instagram
+                {content.instagram.label}
               </p>
               <h3 className="font-serif text-3xl md:text-4xl text-[#1e1a14]">
-                Moments From The Wild
+                {content.instagram.heading}
               </h3>
             </div>
             <Link
-              href="https://www.instagram.com/"
+              href={content.instagram.url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs tracking-[0.2em] uppercase text-[#8b5e3c] border-b border-[#c8923a] pb-0.5 hover:text-[#c8923a] transition-colors shrink-0"
@@ -409,21 +332,13 @@ export default function HomeSections() {
 
           {/* 4-column photo grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-            {[
-              { src: "/assets/elephants.webp", alt: "Elephants in jungle" },
-              { src: "/assets/elephants-in-lake.jpg", alt: "Elephants near water" },
-              { src: "/assets/tiger.jpg", alt: "Tiger in Bardia" },
-              {
-                src: "https://images.unsplash.com/photo-1560743173-567a3b5658b1?w=600&q=80&fit=crop",
-                alt: "Bird life in Bardia National Park",
-              },
-            ].map((photo) => (
+            {content.instagram.photos.map((photo, i) => (
               <div
-                key={photo.src}
+                key={i}
                 className="relative h-44 md:h-64 overflow-hidden group"
               >
                 <Image
-                  src={photo.src}
+                  src={photo.image}
                   alt={photo.alt}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"

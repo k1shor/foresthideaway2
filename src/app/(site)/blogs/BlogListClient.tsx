@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Blog } from "@/lib/api/types";
+import type { Blog, BlogsPageContent } from "@/lib/api/types";
 import CtaLink from "@/components/ui/CtaLink";
 
 function formatMonthYear(iso: string) {
@@ -13,7 +13,12 @@ function formatMonthYear(iso: string) {
   });
 }
 
-export default function BlogListClient({ posts }: { posts: Blog[] }) {
+interface BlogListClientProps {
+  posts: Blog[];
+  comingSoon: BlogsPageContent["comingSoon"];
+}
+
+export default function BlogListClient({ posts, comingSoon }: BlogListClientProps) {
   const categories = ["All", ...Array.from(new Set(posts.map((p) => p.category).filter(Boolean)))];
   const [active, setActive] = useState("All");
   const visible = active === "All" ? posts : posts.filter((p) => p.category === active);
@@ -86,14 +91,14 @@ export default function BlogListClient({ posts }: { posts: Blog[] }) {
 
           {/* Coming soon note */}
           <div className="mt-16 text-center border border-dashed border-[#e8d8c0] py-10 px-6">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-[#c8923a] mb-3">More Stories Coming</p>
-            <p className="font-serif text-2xl text-[#1e1a14] mb-3">The Field Notes Are Growing</p>
-            <p className="text-[#4a3a28] text-sm leading-7 max-w-md mx-auto">
-              We&apos;re adding new stories from the field each season. Sign up for the newsletter to receive
-              them as they arrive — quietly, like the jungle itself.
-            </p>
+            <p className="text-[11px] tracking-[0.3em] uppercase text-[#c8923a] mb-3">{comingSoon.label}</p>
+            <p className="font-serif text-2xl text-[#1e1a14] mb-3">{comingSoon.heading}</p>
+            <p
+              className="text-[#4a3a28] text-sm leading-7 max-w-md mx-auto"
+              dangerouslySetInnerHTML={{ __html: comingSoon.body }}
+            />
             <CtaLink href="/#newsletter" variant="gold" className="mt-6 px-6 py-3 tracking-[0.18em] text-xs">
-              Join the Newsletter
+              {comingSoon.buttonLabel}
             </CtaLink>
           </div>
         </div>

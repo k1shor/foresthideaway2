@@ -5,6 +5,7 @@ import { apiPost } from "@/lib/api/config";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_RE = /^[A-Za-z\s.'-]+$/;
+const ALL_DIGITS_RE = /^\d+$/;
 
 type Fields = {
   name: string;
@@ -31,13 +32,15 @@ function validateField(name: keyof Fields, value: string): string | undefined {
     case "name": {
       const trimmed = value.trim();
       if (!trimmed) return "Please enter your name.";
-      if (trimmed.length < 2) return "Name looks too short.";
+      if (trimmed.length < 3) return "Name looks too short.";
       if (!NAME_RE.test(trimmed)) return "Name can only contain letters and punctuation.";
       return undefined;
     }
     case "email": {
-      if (!value.trim()) return "Please enter your email.";
-      if (!EMAIL_RE.test(value.trim())) return "Please enter a valid email address.";
+      const trimmed = value.trim();
+      if (!trimmed) return "Please enter your email.";
+      if (!EMAIL_RE.test(trimmed)) return "Please enter a valid email address.";
+      if (ALL_DIGITS_RE.test(trimmed.split("@")[0])) return "Email can't be only numbers before the @.";
       return undefined;
     }
     case "arrival": {
@@ -67,7 +70,14 @@ function validateField(name: keyof Fields, value: string): string | undefined {
 const inputClass =
   "w-full px-4 py-3 border bg-white text-[#1e1a14] placeholder:text-[#b0a090] focus:outline-none transition-colors text-sm";
 
-export default function ContactForm() {
+const CUSTOM_OPTION = "Custom / Not sure yet";
+
+interface ContactFormProps {
+  packages: string[];
+}
+
+export default function ContactForm({ packages }: ContactFormProps) {
+  const todayISO = new Date().toISOString().slice(0, 10);
   const [fields, setFields] = useState<Fields>(initialFields);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -156,6 +166,7 @@ export default function ContactForm() {
             id="contact-arrival"
             name="arrival"
             type="date"
+            min={todayISO}
             value={fields.arrival}
             onChange={(e) => handleChange("arrival", e.target.value)}
             onBlur={() => handleBlur("arrival")}
@@ -198,12 +209,10 @@ export default function ContactForm() {
           className={`${inputClass} ${borderClass("package")} appearance-none`}
         >
           <option value="">Select a package or activity</option>
-          <option>Jungle Discovery (2N/3D)</option>
-          <option>Bardia Signature Stay (3N/4D)</option>
-          <option>Complete Wilderness Retreat (4N/5D)</option>
-          <option>Wildlife Photography Tour</option>
-          <option>Tharu Cultural Tour</option>
-          <option>Custom / Not sure yet</option>
+          {packages.map((name) => (
+            <option key={name}>{name}</option>
+          ))}
+          <option>{CUSTOM_OPTION}</option>
         </select>
         {errors.package && <p className="mt-1.5 text-xs text-red-600">{errors.package}</p>}
       </div>

@@ -2,17 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getPackages } from "@/lib/api/packages";
+import { getPackagesPage } from "@/lib/api/pages";
 import CtaLink from "@/components/ui/CtaLink";
 
 export const metadata: Metadata = {
   title: "Packages — Forest Hideaway Resort | Bardia, Nepal",
   description:
     "Explore our curated safari packages — 2, 3, or 4-night stays in Bardia National Park with guided game drives, cultural experiences, and warm jungle hospitality.",
-}; 
-
+};
 
 export default async function PackagesPage() {
-  const packages = await getPackages();
+  const [packages, page] = await Promise.all([getPackages(), getPackagesPage()]);
+  const { hero, quote, listCta } = page;
 
   return (
     <>
@@ -20,7 +21,7 @@ export default async function PackagesPage() {
       <section className="relative bg-[#1c2316] text-[#f5ede0] pt-40 pb-24 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=1600&q=80&fit=crop"
+            src={hero.image}
             alt="Safari at Bardia National Park"
             fill
             className="object-cover opacity-20"
@@ -30,14 +31,13 @@ export default async function PackagesPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#1c2316]/80 to-[#1c2316]" />
         </div>
         <div className="relative max-w-5xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-5">Stay With Us</p>
-          <h1 className="font-serif text-4xl md:text-6xl leading-tight mb-6">Our Packages</h1>
+          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-5">{hero.label}</p>
+          <h1 className="font-serif text-4xl md:text-6xl leading-tight mb-6">{hero.heading}</h1>
           <div className="w-px h-10 bg-[#c8923a]/50 mx-auto mb-7" />
-          <p className="max-w-2xl mx-auto text-[#c8baa0] leading-8">
-            Choose your pace — and we shape the days around what matters most to your journey.
-            From short escapes to deep wilderness immersions, every package is built around
-            Bardia&apos;s natural rhythms.
-          </p>
+          <p
+            className="max-w-2xl mx-auto text-[#c8baa0] leading-8"
+            dangerouslySetInnerHTML={{ __html: hero.subtext }}
+          />
         </div>
       </section>
 
@@ -45,9 +45,10 @@ export default async function PackagesPage() {
       <section className="bg-[#f5ede0] py-12 md:py-16 border-b border-[#e8d8c0]">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
           <div className="w-px h-8 bg-[#c8923a]/40 mx-auto mb-6" />
-          <blockquote className="font-serif text-xl md:text-2xl text-[#1e1a14] leading-relaxed">
-            &ldquo;Choose your pace, and we shape the days around what matters most to your journey.&rdquo;
-          </blockquote>
+          <blockquote
+            className="font-serif text-xl md:text-2xl text-[#1e1a14] leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: `&ldquo;${quote.text}&rdquo;` }}
+          />
           <div className="w-px h-8 bg-[#c8923a]/40 mx-auto mt-6" />
         </div>
       </section>
@@ -99,16 +100,14 @@ export default async function PackagesPage() {
       {/* ── CTA Banner ── */}
       <section className="bg-[#1c2316] py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">Need Help Deciding?</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-[#f5ede0] mb-6">
-            Let Us Shape Your Bardia Journey
-          </h2>
-          <p className="text-[#c8baa0] text-sm leading-8 mb-8 max-w-lg mx-auto">
-            Every guest arrives with different expectations. Reach out and we&apos;ll help you
-            plan the right combination of wildlife, culture, and rest.
-          </p>
+          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">{listCta.label}</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-[#f5ede0] mb-6">{listCta.heading}</h2>
+          <p
+            className="text-[#c8baa0] text-sm leading-8 mb-8 max-w-lg mx-auto"
+            dangerouslySetInnerHTML={{ __html: listCta.body }}
+          />
           <CtaLink href="/contact" variant="cream" className="px-8 py-4 tracking-[0.2em] text-xs">
-            Contact Us
+            {listCta.buttonLabel}
           </CtaLink>
         </div>
       </section>

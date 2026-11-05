@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,18 +10,77 @@ import {
   Package,
   Newspaper,
   MessageSquareText,
+  Home,
+  Users,
+  TreePine,
+  Phone,
+  LayoutTemplate,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Menu,
+  type LucideIcon,
 } from "lucide-react";
 
-const links = [
+interface LeafLink {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+interface GroupLink {
+  key: string;
+  label: string;
+  children: LeafLink[];
+}
+
+type NavItem = LeafLink | GroupLink;
+
+function isGroup(item: NavItem): item is GroupLink {
+  return "children" in item;
+}
+
+const links: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/activities", label: "Activities", icon: Footprints },
-  { href: "/admin/packages", label: "Packages", icon: Package },
-  { href: "/admin/blogs", label: "Blogs", icon: Newspaper },
-  { href: "/admin/guest-reviews", label: "Guest Reviews", icon: MessageSquareText },
+  {
+    key: "activities",
+    label: "Activities",
+    children: [
+      { href: "/admin/activities", label: "List", icon: Footprints },
+      { href: "/admin/pages/activities", label: "Page", icon: LayoutTemplate },
+    ],
+  },
+  {
+    key: "packages",
+    label: "Packages",
+    children: [
+      { href: "/admin/packages", label: "List", icon: Package },
+      { href: "/admin/pages/packages", label: "Page", icon: LayoutTemplate },
+    ],
+  },
+  {
+    key: "blogs",
+    label: "Blogs",
+    children: [
+      { href: "/admin/blogs", label: "List", icon: Newspaper },
+      { href: "/admin/pages/blogs", label: "Page", icon: LayoutTemplate },
+    ],
+  },
+  {
+    key: "guestReviews",
+    label: "Guest Reviews",
+    children: [
+      { href: "/admin/guest-reviews", label: "List", icon: MessageSquareText },
+      { href: "/admin/pages/guest-reviews", label: "Page", icon: LayoutTemplate },
+    ],
+  },
+  { href: "/admin/pages/home", label: "Home Page", icon: Home },
+  { href: "/admin/pages/about", label: "About Us Page", icon: Users },
+  { href: "/admin/pages/bardia-national-park", label: "Bardia National Park Page", icon: TreePine },
+  { href: "/admin/pages/contact", label: "Contact Page", icon: Phone },
 ];
+
+const GROUP_KEYS = links.filter(isGroup).map((g) => g.key);
 
 interface AdminSidebarProps {
   userEmail?: string;
@@ -39,10 +99,34 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const pathname = usePathname();
 
+  // All groups start expanded; collapsing one is a per-group manual choice.
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    () => Object.fromEntries(GROUP_KEYS.map((k) => [k, true]))
+  );
+
+  // If the current route is a child of a group the user previously collapsed,
+  // force that group back open so the active link is never hidden.
+  useEffect(() => {
+    for (const item of links) {
+      if (!isGroup(item)) continue;
+      if (item.children.some((c) => pathname.startsWith(c.href))) {
+        setExpandedGroups((prev) => (prev[item.key] ? prev : { ...prev, [item.key]: true }));
+      }
+    }
+  }, [pathname]);
+
+  function toggleGroup(key: string) {
+    setExpandedGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
   // Mobile visibility of labels/logo-text follows mobileExpanded; desktop follows collapsed.
   const labelClass = `${mobileExpanded ? "inline" : "hidden"} ${collapsed ? "md:hidden" : "md:inline"}`;
   const logoLabelClass = `${mobileExpanded ? "flex" : "hidden"} ${collapsed ? "md:hidden" : "md:flex"}`;
   const emailClass = `${mobileExpanded ? "block" : "hidden"} ${collapsed ? "md:hidden" : "md:block"}`;
+  // The whole group header row (text + chevron) only makes sense when labels are visible —
+  // in icon-only rail mode (mobile collapsed or desktop collapsed) there's no room for it,
+  // so the group flattens to just its children's icons, same as any standalone link.
+  const groupHeaderClass = `${mobileExpanded ? "flex" : "hidden"} ${collapsed ? "md:hidden" : "md:flex"}`;
 
   return (
     <>
@@ -93,18 +177,70 @@ export default function AdminSidebar({
           </button>
         </div>
 
-        {links.map((link) => {
-          const active =
-            link.href === "/admin"
-              ? pathname === "/admin"
-              : pathname.startsWith(link.href);
-          const Icon = link.icon;
+        {links.map((item) => {
+          if (isGroup(item)) {
+            const groupActive = item.children.some((c) => pathname.startsWith(c.href));
+            const expanded = expandedGroups[item.key];
+            return (
+              <div key={item.key}>
+                {/* Group header — hidden entirely in icon-only rail mode, where the
+                    group just flattens to its children's icons (see groupHeaderClass). */}
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(item.key)}
+                  aria-expanded={expanded}
+                  className={`${groupHeaderClass} w-full items-center justify-between gap-2.5 px-3 py-2.5 rounded-md text-[11px] tracking-[0.1em] uppercase font-light transition-colors ${
+                    groupActive ? "text-[#f0d9a8]" : "text-[#cfc4a8] hover:bg-white/[0.04] hover:text-[#f5ede0]"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={2}
+                    className={`shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {item.children.map((child) => {
+                  const active = pathname.startsWith(child.href);
+                  const Icon = child.icon;
+                  // Visible when: in icon-only rail mode (flattened, always shown), OR
+                  // in full-width mode with this group expanded. Mirrors labelClass's
+                  // own mobile/desktop split so both breakpoints stay independently correct.
+                  const childVisibleClass = `${
+                    !mobileExpanded || expanded ? "flex" : "hidden"
+                  } ${collapsed || expanded ? "md:flex" : "md:hidden"}`;
+                  return (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      onClick={() => mobileExpanded && onToggleMobileExpanded()}
+                      title={collapsed && !mobileExpanded ? `${item.label} ${child.label}` : undefined}
+                      className={`${childVisibleClass} items-center gap-2.5 px-3 py-2.5 rounded-md text-[11px] tracking-[0.1em] uppercase font-light transition-colors ${
+                        !mobileExpanded ? "justify-center px-0" : "pl-8"
+                      } ${collapsed ? "md:justify-center md:px-0" : "md:pl-8 md:justify-start"} ${
+                        active
+                          ? "bg-[#c8923a]/[0.16] text-[#f0d9a8]"
+                          : "text-[#cfc4a8] hover:bg-white/[0.04] hover:text-[#f5ede0]"
+                      }`}
+                    >
+                      <Icon size={16} strokeWidth={1.75} className="shrink-0" />
+                      <span className={labelClass}>{child.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            );
+          }
+
+          const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+          const Icon = item.icon;
           return (
             <Link
-              key={link.href}
-              href={link.href}
+              key={item.href}
+              href={item.href}
               onClick={() => mobileExpanded && onToggleMobileExpanded()}
-              title={collapsed && !mobileExpanded ? link.label : undefined}
+              title={collapsed && !mobileExpanded ? item.label : undefined}
               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[11px] tracking-[0.1em] uppercase font-light transition-colors ${
                 !mobileExpanded ? "justify-center px-0" : ""
               } ${collapsed ? "md:justify-center md:px-0" : "md:justify-start"} ${
@@ -114,7 +250,7 @@ export default function AdminSidebar({
               }`}
             >
               <Icon size={16} strokeWidth={1.75} className="shrink-0" />
-              <span className={labelClass}>{link.label}</span>
+              <span className={labelClass}>{item.label}</span>
             </Link>
           );
         })}

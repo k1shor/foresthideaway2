@@ -57,6 +57,14 @@ export const adminApiClient = {
     request<T>(`/api/admin/${resource}/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   remove: (resource: string, id: string) =>
     request<Record<string, never>>(`/api/admin/${resource}/${id}`, { method: "DELETE" }),
+  getSingleton: <T>(resource: string) => request<T>(`/api/admin/${resource}`),
+  updateSingleton: <T>(resource: string, body: unknown) =>
+    request<T>(`/api/admin/${resource}`, { method: "PUT", body: JSON.stringify(body) }),
+  revalidate: (path: string) =>
+    request<{ success: boolean }>("/api/revalidate", {
+      method: "POST",
+      body: JSON.stringify({ path }),
+    }),
   uploadImage: async (file: File): Promise<{ url: string }> => {
     const token = getToken();
     const formData = new FormData();

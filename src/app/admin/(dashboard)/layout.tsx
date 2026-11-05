@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Toaster } from "sonner";
 import { useAdminAuth } from "@/lib/admin/useAdminAuth";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminTopbar from "@/components/admin/AdminTopbar";
@@ -38,6 +39,7 @@ export default function DashboardLayout({
 
   return (
     <div className="flex min-h-screen bg-[#faf6ef]">
+      <Toaster position="top-right" richColors />
       <AdminSidebar
         userEmail={user.email}
         collapsed={collapsed}

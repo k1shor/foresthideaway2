@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getBlogBySlug } from '@/lib/api/blogs';
+import { getBlogsPage } from '@/lib/api/pages';
 import CtaLink from '@/components/ui/CtaLink';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -37,6 +37,8 @@ export default async function BlogDetailPage({ params }: Props) {
   } catch {
     notFound();
   }
+
+  const { detailCta } = await getBlogsPage();
 
   const paragraphs = blog.content
     .split('\n')
@@ -99,14 +101,14 @@ export default async function BlogDetailPage({ params }: Props) {
       {/* ── CTA ── */}
       <section className="bg-[#1c2316] py-14 md:py-20">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">Continue Reading</p>
-          <h2 className="font-serif text-3xl text-[#f5ede0] mb-6">More Stories From Bardia</h2>
+          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">{detailCta.label}</p>
+          <h2 className="font-serif text-3xl text-[#f5ede0] mb-6">{detailCta.heading}</h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <CtaLink href="/blogs" variant="cream" className="px-8 py-4 tracking-[0.2em] text-xs">
-              All Stories
+              {detailCta.button1Label}
             </CtaLink>
             <CtaLink href="/contact" variant="muted" className="px-8 py-4 tracking-[0.2em] text-xs">
-              Contact Us
+              {detailCta.button2Label}
             </CtaLink>
           </div>
         </div>

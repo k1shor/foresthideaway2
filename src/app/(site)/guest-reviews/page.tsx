@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { getGuestReviews } from "@/lib/api/guestReviews";
+import { getGuestReviewsPage } from "@/lib/api/pages";
 import CtaLink from "@/components/ui/CtaLink";
 
 export const metadata: Metadata = {
@@ -10,14 +10,15 @@ export const metadata: Metadata = {
 };
 
 export default async function GuestReviewsPage() {
-  const reviews = await getGuestReviews();
+  const [reviews, page] = await Promise.all([getGuestReviews(), getGuestReviewsPage()]);
+  const { hero, quote, listLabel, cta } = page;
 
   return (
     <>
       <section className="relative bg-[#1c2316] text-[#f5ede0] pt-40 pb-24 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/assets/elephants-in-lake.jpg"
+            src={hero.image}
             alt="Elephants in Bardia"
             fill
             className="object-cover opacity-25"
@@ -27,30 +28,32 @@ export default async function GuestReviewsPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#1c2316]/80 to-[#1c2316]" />
         </div>
         <div className="relative max-w-5xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-5">What Guests Say</p>
-          <h1 className="font-serif text-4xl md:text-6xl leading-tight mb-6">Guest Reviews</h1>
+          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-5">{hero.label}</p>
+          <h1 className="font-serif text-4xl md:text-6xl leading-tight mb-6">{hero.heading}</h1>
           <div className="w-px h-10 bg-[#c8923a]/50 mx-auto mb-7" />
-          <p className="max-w-xl mx-auto text-[#c8baa0] leading-8">
-            Every story here is real — told by guests who came to Bardia for the wildlife and left carrying something they didn&apos;t expect to find.
-          </p>
+          <p
+            className="max-w-xl mx-auto text-[#c8baa0] leading-8"
+            dangerouslySetInnerHTML={{ __html: hero.subtext }}
+          />
         </div>
       </section>
 
       <section className="bg-[#f5ede0] py-16 md:py-20 border-b border-[#e8d8c0]">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
           <div className="w-px h-8 bg-[#c8923a]/40 mx-auto mb-6" />
-          <p className="font-serif text-2xl md:text-3xl text-[#1e1a14] leading-snug mb-5">
-            &ldquo;The people made us feel at home, and the wilderness made us feel alive.&rdquo;
-          </p>
-          <p className="text-[11px] tracking-[0.25em] uppercase text-[#c8923a]">— A Guest, 2024</p>
+          <p
+            className="font-serif text-2xl md:text-3xl text-[#1e1a14] leading-snug mb-5"
+            dangerouslySetInnerHTML={{ __html: `&ldquo;${quote.text}&rdquo;` }}
+          />
+          <p className="text-[11px] tracking-[0.25em] uppercase text-[#c8923a]">{quote.attribution}</p>
           <div className="w-px h-8 bg-[#c8923a]/40 mx-auto mt-6" />
         </div>
       </section>
 
       <section className="bg-[#faf6ef] py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6 md:px-12">
-          <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">Verified Stories</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-[#1e1a14] mb-14">Voices From Bardia</h2>
+          <p className="text-[11px] tracking-[0.32em] uppercase text-[#c8923a] mb-4">{listLabel.label}</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-[#1e1a14] mb-14">{listLabel.heading}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => (
               <article key={review._id} className="bg-white border border-[#e8d8c0] p-6 md:p-7 flex flex-col">
@@ -78,13 +81,14 @@ export default async function GuestReviewsPage() {
 
       <section className="bg-[#1c2316] py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">Your Turn</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-[#f5ede0] mb-6">Write Your Own Bardia Story</h2>
-          <p className="text-[#c8baa0] text-sm leading-8 mb-8 max-w-lg mx-auto">
-            Every journey through Bardia is different. Start planning yours.
-          </p>
+          <p className="text-[11px] tracking-[0.35em] uppercase text-[#c8923a] mb-4">{cta.label}</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-[#f5ede0] mb-6">{cta.heading}</h2>
+          <p
+            className="text-[#c8baa0] text-sm leading-8 mb-8 max-w-lg mx-auto"
+            dangerouslySetInnerHTML={{ __html: cta.body }}
+          />
           <CtaLink href="/packages" variant="cream" className="px-8 py-4 tracking-[0.2em] text-xs">
-            Plan Your Stay
+            {cta.buttonLabel}
           </CtaLink>
         </div>
       </section>
